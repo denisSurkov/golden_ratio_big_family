@@ -15,14 +15,20 @@ class Parser:
         self.api = session.get_api()
 
     def start_parse(self, group_id: int) -> list:
-        answer = self.api.groups.getMembers(group_id=group_id, fields='sex,bdate,photo_50,city')
+        _payload = {
+            "group_id": group_id,
+            "fields": "sex,bdate,photo_50,city",
+            "lang":"ru"
+        }
+
+        answer = self.api.groups.getMembers(**_payload)
 
         total_members = answer['items']
         total_count = answer['count']
 
         _offset = 1000
         while _offset < total_count:
-            answer = self.api.groups.getMembers(group_id=group_id, offset=_offset, fields='sex,bdate,photo_50,city')
+            answer = self.api.groups.getMembers(**_payload, offset=_offset)
             total_members.extend(answer['items'])
 
             _offset += _offset
